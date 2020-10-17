@@ -5,8 +5,9 @@ import pandas as pd
 # overall profits at a location
 
 class revenue:
-    def __init__(self, file_name):
+    def __init__(self, receipts_file_name, sales_outlet_file_name, ):
         self.file_name = file_name
+        self.revenue_per_location = {}
 
     def reading_csv_provided(self):
         # "archive/201904_sales_reciepts.csv"
@@ -28,8 +29,6 @@ class revenue:
         # list of all locations
         location_list = df['sales_outlet_id'].unique().tolist()
 
-        revenue_per_location = {}
-
         for location in location_list:
             # used to filter every location
             temp1 = df
@@ -40,7 +39,7 @@ class revenue:
                 temp2 = temp1
                 temp2 = temp2[temp2.product_id.eq(id)]
                 revenue_per_product[id] = round((temp2['quantity']*temp2['unit_price']).sum(), 3)
-            revenue_per_location[location] = revenue_per_product
+            self.revenue_per_location[location] = revenue_per_product
 
     def revenue_for_location(self, location):
 
