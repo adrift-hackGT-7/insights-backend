@@ -37,4 +37,18 @@ for location in location_list:
         revenue_per_product[id] = round((temp2['quantity']*temp2['unit_price']).sum(), 3)
     revenue_per_location[location] = revenue_per_product
 
-print(revenue_per_location)
+df = pd.read_csv("archive/201904_sales_reciepts.csv", usecols = [3, 9, 10])
+df.loc[start_date:end_date]
+df2 = pd.read_csv("archive/product.csv", usecols = [0 , 7])
+for location in self.location_list:
+    # used to filter every location
+    temp1 = df
+    temp1 = temp1[temp1.sales_outlet_id.eq(location)]
+    profit_per_product = {}
+    for id in self.product_ids:
+        # used to filter data for every product
+        temp2 = temp1
+        temp2 = temp2[temp2.product_id.eq(id)]
+        temp3 = df2[df2.product_id.eq(id)]
+        profit_per_product[id] = round((temp2['quantity']*temp3['current_wholesale_price']).sum(), 3)
+    self.profit_per_location[location] = profit_per_product

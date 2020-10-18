@@ -1,8 +1,9 @@
-import numpy as np 
+import numpy as np
 import pandas as pd
 # sum by product_id and sales_outlet_id
-# find individual product profits and 
+# find individual product profits and
 # overall profits at a location
+
 
 class revenue:
     def __init__(self, start_date, end_date, receipts_file_name, sales_outlet_file_name, product_file_name):
@@ -37,8 +38,10 @@ class revenue:
         # "archive/201904_sales_reciepts.csv"
         # going to assume that data needs to be sent in in this format
         # so we should have a file that showcases the metadata of the tables
-        df = pd.read_csv(self.file_name, usecols = [1, 3, 9, 10, 12, 13])
-        df.loc[self.start_date:self.end_date]
+        df = pd.read_csv(self.file_name, usecols=[
+                         1, 3, 9, 10, 12, 13], skiprows=range(2, self.start_date), nrows=self.end_date-self.start_date)
+
+        # df.loc[self.start_date:self.end_date]
 
         # File metadata with column numbers:
         # "transaction_id" = 0,"transaction_date" = 1,"transaction_time" = 2,
@@ -63,7 +66,8 @@ class revenue:
                 # used to filter data for every product
                 temp2 = temp1
                 temp2 = temp2[temp2.product_id.eq(id)]
-                revenue_per_product[id] = round((temp2['quantity']*temp2['unit_price']).sum(), 3)
+                revenue_per_product[id] = round(
+                    (temp2['quantity']*temp2['unit_price']).sum(), 3)
             self.revenue_per_location[location] = revenue_per_product
 
     def reading_sales_outlet_csv(self):
@@ -72,10 +76,11 @@ class revenue:
         # store_address = 3,store_city = 4,store_state_province = 5,
         # store_telephone = 6,store_postal_code = 7,store_longitude = 8,
         # store_latitude = 9,manager = 10,Neighorhood = 11
-    
+
         # here Neighborhood is basically the store name
         # I just need to get a mapping from name to ID
-        sales_outlet = pd.read_csv(self.sales_outlet_file_name, usecols = [0, 11])
+        sales_outlet = pd.read_csv(
+            self.sales_outlet_file_name, usecols=[0, 11])
         loc_names = sales_outlet['Neighorhood'].unique().tolist()
         loc_ids = sales_outlet['sales_outlet_id'].unique().tolist()
         zipper = zip(loc_names, loc_ids)
@@ -89,10 +94,9 @@ class revenue:
         # product_description = 5,unit_of_measure = 6,current_wholesale_price = 7,
         # current_retail_price = 8,tax_exempt_yn = 9,promo_yn = 10,new_product_yn = 11
 
-    
         # here product is the name that will be passed in
         # I just need to get a mapping from name to ID
-        products = pd.read_csv(self.product_file_name, usecols = [0, 4])
+        products = pd.read_csv(self.product_file_name, usecols=[0, 4])
         prod_name = products['product'].unique().tolist()
         prod_ids = products['product_id'].unique().tolist()
         zipper = zip(prod_name, prod_ids)
@@ -115,17 +119,19 @@ class revenue:
         product_mapping = self.revenue_per_location[location_id]
         return product_mapping[product_id]
 
-    #____________________________________________________________________________________________________
+    # ____________________________________________________________________________________________________
     # methods for calculating profits
 
     def profit_per_product(self):
-        # for each product, look up the wholesale price in 
-        # product.csv (current_wholesale_price) 
+        # for each product, look up the wholesale price in
+        # product.csv (current_wholesale_price)
         # we can subtract (price we charge - current_wholesale_price)
         # and then multiply by quantity to calculate profit
-        df = pd.read_csv(self.file_name, usecols = [3, 9, 10])
-        df.loc[self.start_date:self.end_date]
-        df2 = pd.read_csv(self.product_file_name, usecols = [0 , 7])
+        df = pd.read_csv(self.file_name, usecols=[
+            3, 9, 10], skiprows=range(2, self.start_date), nrows=self.end_date-self.start_date)
+        # df = pd.read_csv(self.file_name, usecols=[3, 9, 10])
+        # df.loc[self.start_date:self.end_date]
+        df2 = pd.read_csv(self.product_file_name, usecols=[0, 7])
         for location in self.location_list:
             # used to filter every location
             temp1 = df
@@ -136,7 +142,9 @@ class revenue:
                 temp2 = temp1
                 temp2 = temp2[temp2.product_id.eq(id)]
                 temp3 = df2[df2.product_id.eq(id)]
-                profit_per_product[id] = round((temp2['quantity']*temp3['current_wholesale_price']).sum(), 3)
+                profit_per_product[id] = -1*(round(
+                    (temp2['quantity']*temp3['current_wholesale_price']).sum(), 3) -
+                    self.revenue_per_location[location][id])
             self.profit_per_location[location] = profit_per_product
 
     def profit_for_location(self, location):
@@ -154,10 +162,13 @@ class revenue:
         product_mapping = self.profit_per_location[location_id]
         return product_mapping[product_id]
 
-    #____________________________________________________________________________________________________
+    # ____________________________________________________________________________________________________
     # to obtain the dictionaries for revenue and profit
     def get_revenue_dict(self):
         return self.revenue_per_location
 
     def get_profit_dict(self):
         return self.profit_per_location
+
+    def get_locations_list(self):
+        return self.location_list
