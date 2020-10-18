@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, Response
 import algo
 import json
 import make_json as make_json
@@ -81,7 +81,9 @@ def current_insight():
     temp.append(one)
     temp.append(two)
 
-    return json.dumps(make_json.make_group(temp))
+    response = Response(json.dumps(make_json.make_group(temp)))
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 
 @app.route('/shop/{id}/insight/past')
@@ -154,4 +156,6 @@ def past_insight():
     temp.append(one)
     temp.append(two)
 
-    return json.dumps(make_json.make_group(temp))
+    response = Response(json.dumps(make_json.make_group(temp)))
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
