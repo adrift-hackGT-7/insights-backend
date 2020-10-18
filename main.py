@@ -148,7 +148,8 @@ def past_insight():
             worst_prod_name, "remove", "dismissed", "Remove *{0}* from your catalog for an increased revenue".format(worst_prod_name), "Based on sales data in similar stores that stock this item in the past 2 months")
         temp.append(worst_item)
 
-    temp.append(staff_item)
+    if staff_item != None:
+        temp.append(staff_item)
     temp.append(best_item)
     two = make_json.make_group_element(temp, "february 2019", "February 2019")
 
