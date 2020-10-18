@@ -127,6 +127,7 @@ def past_insight():
     # get name of best product
     # get name for worst product
     # get increase or decrease staff
+    temp = []
     staff_item = None
     if staff_count == 1:
         staff_item = make_json.make_item(
@@ -139,14 +140,14 @@ def past_insight():
     best_item = make_json.make_item(
         best_prod_name, "add", "accepted", "Add *{0}* to your catalog for an increased revenue".format(best_prod_name), "Based on sales data in similar stores that stock this item in the past 2 months")
 
-    worst_prod_name = prod_obj.get_prod_name(worst_prod)
-    worst_item = make_json.make_item(
-        worst_prod_name, "remove", "dismissed", "Remove *{0}* from your catalog for an increased revenue".format(worst_prod_name), "Based on sales data in similar stores that stock this item in the past 2 months")
+    if (worst_prod != 0):
+        worst_prod_name = prod_obj.get_prod_name(worst_prod)
+        worst_item = make_json.make_item(
+            worst_prod_name, "remove", "dismissed", "Remove *{0}* from your catalog for an increased revenue".format(worst_prod_name), "Based on sales data in similar stores that stock this item in the past 2 months")
+        temp.append(worst_item)
 
-    temp = []
     temp.append(staff_item)
     temp.append(best_item)
-    temp.append(worst_item)
     two = make_json.make_group_element(temp, "february 2019", "February 2019")
 
     temp = []
