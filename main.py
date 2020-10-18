@@ -54,10 +54,10 @@ def current_insight():
     staff_item = None
     if staff_count == 1:
         staff_item = make_json.make_item(
-            "increase-staffing", "people", "accepted", "Accepted - increase staffing to see potential revenue increases", "")
+            "increase-staffing", "people", "accepted", "Increase staffing to see potential revenue increases", "Based on sales and staffing data in similar stores in the past 2 months")
     if staff_count == 2:
         staff_item = make_json.make_item(
-            "decrease-staffing", "people", "accepted", "Accepted - decrease staffing to see potential revenue increases", "")
+            "decrease-staffing", "people", "accepted", "Decrease staffing to see potential revenue increases", "Based on sales and staffing data in similar stores in the past 2 months")
 
     best_prod_name = prod_obj.get_prod_name(best_prod)
     best_item = make_json.make_item(
