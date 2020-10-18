@@ -1,6 +1,7 @@
 from revenue import revenue
 from datetime import datetime
 import pandas as pd
+from staff import staff
 
 
 def algo(store_id):
@@ -104,10 +105,9 @@ def weekoverweek():
 
             week_perf.append(best_prod_id)
         best_prod_per_loc_per_week[loc] = week_perf
-    print(best_prod_per_loc_per_week)
 
     # loc -> week -> best prod_id
-    best_prod_per_loc_per_week_min = {}
+    worst_prod_per_loc_per_week = {}
     for loc in weeks[1].get_locations_list():
         week_perf = []
         for i in range(len(weeks)-1):
@@ -134,8 +134,48 @@ def weekoverweek():
                     break
 
             week_perf.append(worst_prod_id)
-        best_prod_per_loc_per_week_min[loc] = week_perf
-    print(best_prod_per_loc_per_week_min)
+        worst_prod_per_loc_per_week[loc] = week_perf
 
 
-weekoverweek()
+# same as above
+# if there is a decrease in the growth
+# and there is a decrease in the number of staff (check weekly dif i guess)
+# then say we need more staff
+
+    staff_weeks = {}
+    receipts_file_name = "archive/201904_sales_reciepts.csv"
+    staff_weeks[0] = staff(1, 11362, receipts_file_name)
+    # 2019-04-08 #2019-04-14
+    staff_weeks[1] = staff(11363, 23713, receipts_file_name)
+    # 2019-04-15 #2019-04-21
+    staff_weeks[2] = staff(23714, 36473, receipts_file_name)
+    # 2019-04-22 #2019-04-28
+    staff_weeks[3] = staff(36474, 48427, receipts_file_name)
+
+    staff_count_per_loc = {}
+    for loc in weeks[1].get_locations_list():
+        diff_in_staff = []
+        for i in range(len(staff_weeks) - 1):
+            low = staff_weeks[i].staff_at_location(loc)
+            high = staff_weeks[i+1].staff_at_location(loc)
+            diff_in_staff.append(high - low)
+        staff_count_per_loc[loc] = diff_in_staff
+
+    for i in growth_per_store:
+        for j in growth_per_store[i]:
+            if growth_per_store[i][j] > 0:
+                worst_prod_per_loc_per_week[i][j] = 0
+                staff_count_per_loc[i][j] = 0
+            if growth_per_store[i][j] < 0:
+                if staff_count_per_loc[i][j] < 0:
+                    staff_count_per_loc[i][j] = 1
+                elif staff_count_per_loc[i][j] > 0:
+                    staff_count_per_loc[i][j] = 2
+                else:
+                    staff_count_per_loc[i][j] = 0
+    ret_arr = []
+    ret_arr.append(best_prod_per_loc_per_week)
+    ret_arr.append(worst_prod_per_loc_per_week)
+    ret_arr.append(staff_count_per_loc)
+
+    return ret_arr
