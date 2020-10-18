@@ -71,29 +71,33 @@ class revenue:
         # sales_outlet_id = 0,sales_outlet_type = 1,store_square_feet = 2,
         # store_address = 3,store_city = 4,store_state_province = 5,
         # store_telephone = 6,store_postal_code = 7,store_longitude = 8,
-        # store_latitude,manager = 9,Neighorhood = 10
+        # store_latitude = 9,manager = 10,Neighorhood = 11
     
         # here Neighborhood is basically the store name
         # I just need to get a mapping from name to ID
-        sales_outlet = pd.read_csv(self.sales_outlet_file_name, usecols = [0, 10])
-        zipper = zip(sales_outlet['Neighborhood'].unique().tolist(), sales_outlet['sales_outlet_id'].unique().tolist())
+        sales_outlet = pd.read_csv(self.sales_outlet_file_name, usecols = [0, 11])
+        loc_names = sales_outlet['Neighorhood'].unique().tolist()
+        loc_ids = sales_outlet['sales_outlet_id'].unique().tolist()
+        zipper = zip(loc_names, loc_ids)
 
-        for i in zipper():
+        for i in zipper:
             self.sales_outlet_to_id[i[0]] = i[1]
 
     def reading_product_csv(self):
         # Product CSV metadata:
-        # product_id = 0,product_group = 1,product_category = 2,product_type,product = 3,
-        # product_description = 4,unit_of_measure = 5,current_wholesale_price = 6,
-        # current_retail_price = 7,tax_exempt_yn = 8,promo_yn = 9,new_product_yn = 10
+        # product_id = 0,product_group = 1,product_category = 2,product_type = 3,product = 4,
+        # product_description = 5,unit_of_measure = 6,current_wholesale_price = 7,
+        # current_retail_price = 8,tax_exempt_yn = 9,promo_yn = 10,new_product_yn = 11
 
     
         # here product is the name that will be passed in
         # I just need to get a mapping from name to ID
-        products = pd.read_csv(self.product_file_name, usecols = [0, 3])
-        zipper = zip(products['product'].unique().tolist(), products['product_id'].unique().tolist())
+        products = pd.read_csv(self.product_file_name, usecols = [0, 4])
+        prod_name = products['product'].unique().tolist()
+        prod_ids = products['product_id'].unique().tolist()
+        zipper = zip(prod_name, prod_ids)
 
-        for i in zipper():
+        for i in zipper:
             self.product_to_id[i[0]] = i[1]
 
     def revenue_for_location(self, location):
@@ -120,8 +124,8 @@ class revenue:
         # we can subtract (price we charge - current_wholesale_price)
         # and then multiply by quantity to calculate profit
         df = pd.read_csv(self.file_name, usecols = [3, 9, 10])
-        df.loc[start_date:end_date]
-        df2 = pd.read_csv(self.product_file_name, usecols = [0 , 6])
+        df.loc[self.start_date:self.end_date]
+        df2 = pd.read_csv(self.product_file_name, usecols = [0 , 7])
         for location in self.location_list:
             # used to filter every location
             temp1 = df

@@ -35,8 +35,8 @@ def weekoverweek():
     week1profit = week1.get_profit_dict()
     for store in week1profit:
         sum = 0
-        for item in store:
-            sum = sum + store[item]
+        for item in week1profit[store]:
+            sum = sum + week1profit[store][item]
         print(sum)
     
             
