@@ -8,7 +8,7 @@ class revenue:
     def __init__(self, start_date, end_date, receipts_file_name, sales_outlet_file_name, product_file_name):
         # dates range/week to extract data from
         self.start_date = start_date
-        self.end_date = endend_date
+        self.end_date = end_date
 
         # to obtain the names of the necessary CSV files to read from
         self.file_name = receipts_file_name
@@ -38,7 +38,7 @@ class revenue:
         # going to assume that data needs to be sent in in this format
         # so we should have a file that showcases the metadata of the tables
         df = pd.read_csv(self.file_name, usecols = [1, 3, 9, 10, 12, 13])
-        df.loc[start_date:end_date]
+        df.loc[self.start_date:self.end_date]
 
         # File metadata with column numbers:
         # "transaction_id" = 0,"transaction_date" = 1,"transaction_time" = 2,
@@ -149,3 +149,11 @@ class revenue:
 
         product_mapping = self.profit_per_location[location_id]
         return product_mapping[product_id]
+
+    #____________________________________________________________________________________________________
+    # to obtain the dictionaries for revenue and profit
+    def get_revenue_dict(self):
+        return self.revenue_per_location
+
+    def get_profit_dict(self):
+        return self.profit_per_location
