@@ -13,6 +13,8 @@ For more information, feel free to check out our post on DevPost: [https://devpo
 ## 🚀 Getting Started
 
 To run the code
-run `pip install requirements.txt`
-run `FLASK_APP=main`
+run `pip install requirements.txt`  
+
+run `FLASK_APP=main`  
+
 run `python -m flask run`
